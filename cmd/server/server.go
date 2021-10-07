@@ -9,12 +9,13 @@ import (
 
 func main() {
 	e := gin.New()
-	gin.Recovery()
 
 	e.Use(func(context *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
 				log.Println("Recovered from panic:", string(debug.Stack()))
+				// Try to log a response, if it doesn't work because the connection
+				// is closed then that's ok.
 				context.JSON(500, "Internal Server Error")
 			}
 		}()
